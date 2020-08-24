@@ -21,6 +21,7 @@ class Game:
         self.s_player = pygame.image.load(BLUE_HOT_SPRITE)
         self.run_game = True
         self.field = self.init_field(pg_height, pg_width)
+        self.move_cell_y_max = self.field.__len__() - 1
 
     scene = 1
 
@@ -72,10 +73,10 @@ class Game:
             self.move_x + PG_CELL_SIZE * self.move_cell_x,
             self.move_y + PG_CELL_SIZE * self.move_cell_y - self.move_hgh
         ))
-        if self.move_cell_y < self.pg_hgh:
+        if self.move_cell_y < self.move_cell_y_max:
             self.move_cell_y += 1
         else:
-            self.record_hot()
+            self.mem_move()
             self.change_move()
 
     def check_event(self):
@@ -93,12 +94,13 @@ class Game:
                 if ev.key == pygame.K_LEFT:
                     self.selected_key = "left"
                 if ev.key == pygame.K_RETURN or ev.key == pygame.K_KP_ENTER:
+                    if not self.is_move_selected:
+                        self.calculate_field_cell()
                     self.is_move_selected = True
 
     def start(self):
         while self.run_game:
             self.check_event()
-
             self.draw_bg()
             self.draw_pg()
             if self.is_move_selected:
@@ -147,5 +149,19 @@ class Game:
     def record_hot(self):
         print(self.move_cell_x + 1)
         print(self.move_cell_y + 1)
-        self.field[self.move_cell_y + 1 ][self.move_cell_x] = self.selected_player
+        self.field[self.move_cell_y + 1][self.move_cell_x] = self.selected_player
+
+    def calculate_field_cell(self):
+        for row in range(0, self.field[0].__len__() - 1):
+            if self.field[row][self.move_cell_x] != "none" or row == self.field.__len__() - 1:
+                if self.field[row][self.move_cell_x] != "none":
+                    self.move_cell_y_max = row - 1
+                else:
+                    self.move_cell_y_max = row
+                break
+
+    def mem_move(self):
+        self.field[self.move_cell_y_max][self.move_cell_x] = self.selected_player
+
+
 
