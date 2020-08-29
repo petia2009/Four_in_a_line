@@ -156,8 +156,10 @@ class Game:
             if self.field[row][self.move_cell_x] != "none" or row == self.field.__len__() - 1:
                 if self.field[row][self.move_cell_x] != "none":
                     self.move_cell_y_max = row - 1
-                else:
+                elif row == self.field.__len__() - 1:
                     self.move_cell_y_max = row
+                else:
+                    break
                 break
 
     def mem_move(self):
